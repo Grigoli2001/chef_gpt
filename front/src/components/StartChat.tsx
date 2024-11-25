@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { startNewChat } from "../api/gpt";
 
 export default function StartChat({
@@ -9,13 +10,18 @@ export default function StartChat({
   chatId: string;
   setChatId: (chatId: string) => void;
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const handleStartChat = async () => {
+    setIsLoading(true);
     await startNewChat(chef_name, chatId)
       .then((res) => {
         console.log(res);
+        setChatId(res.sessionId);
+        setIsLoading(false);
       })
       .catch((error) => {
         console.error("Error starting chat:", error);
+        setIsLoading(false);
       });
   };
 
@@ -28,7 +34,9 @@ export default function StartChat({
         value={chatId}
         onChange={(e) => setChatId(e.target.value)}
       />
-      <button onClick={handleStartChat}>Start Chat</button>
+      <button onClick={handleStartChat} disabled={isLoading}>
+        {isLoading ? "Starting..." : "Start Chat"}
+      </button>
     </div>
   );
 }

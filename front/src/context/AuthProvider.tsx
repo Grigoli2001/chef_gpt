@@ -151,7 +151,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const authInterceptor = api.interceptors.request.use(
       (config: CustomAxiosRequestConfig) => {
         if (!config._retry && tokenRef.current) {
-          console.log("Auth interceptor called");
           config.headers = config.headers || {};
           config.headers.Authorization = `Bearer ${tokenRef.current.toString()}`;
         }
@@ -173,7 +172,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           originalRequest._retry = true;
           try {
             const { accessToken } = await refreshToken();
-            console.log("Access token refreshed:", accessToken.toString());
             if (!accessToken) {
               throw new Error("Access token not found");
             }

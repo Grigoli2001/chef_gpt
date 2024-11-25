@@ -10,6 +10,7 @@ export interface IChat {
   user: mongoose.Types.ObjectId; // Reference to the User model
   messages: IMessage[]; // Array of messages in the chat
   chat_session_id?: string; // ID of the chat session
+  chef_name?: string; // Name of the chef
   created_at?: Date;
   updated_at?: Date;
 }
@@ -42,6 +43,9 @@ const chatSchema = new Schema<IChatDocument>(
     },
     messages: [messageSchema],
     chat_session_id: {
+      type: String,
+    },
+    chef_name: {
       type: String,
     },
   },

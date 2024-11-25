@@ -38,7 +38,7 @@ class GPTController {
         chef_name,
         preferences,
         userId,
-        chatId
+        chatId,
       );
       return res
         .status(statusCodes.success)
@@ -62,11 +62,11 @@ class GPTController {
 
     try {
       const chatHistory = await GPTService.getChatHistory(userId, chatId);
-      return res.json({ history: chatHistory });
+      return res.json({ chatHistory });
     } catch (error) {
       return res
         .status(500)
-        .json({ message: "Failed to retrieve chat history", error });
+        .json({ message: "Failed to retrieve chat history" + error });
     }
   }
 

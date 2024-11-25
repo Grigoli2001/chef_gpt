@@ -5,6 +5,7 @@ import { IUserPreferences } from "../models/userPreferences.model";
 import logger from "../middlewares/winston";
 import { Response } from "express";
 import { v4 as uuidv4 } from "uuid";
+import SocketService from "./socket.service";
 
 class GPTService {
   private model: any;
@@ -37,7 +38,7 @@ class GPTService {
     chef_name: string,
     preferences: IUserPreferences,
     userId: string,
-    chatId?: string
+    chatId?: string,
   ): Promise<string> {
     const {
       vegetarian,
@@ -67,7 +68,6 @@ class GPTService {
 
     if (chatId) {
       id = chatId;
-      // Retrieve the chat session for the user
       const chatDocument = await ChatModel.findOne({
         chat_session_id: chatId,
         user: userId,
@@ -76,9 +76,8 @@ class GPTService {
         throw new Error("Chat not found.");
       }
 
-      // add previous messages to system message in this format "user: message" or "assistant: message"
       const messages = chatDocument.messages.map(
-        (message) => `${message.role}: ${message.content}`
+        (message) => `${message.role}: ${message.content}`,
       );
 
       systemMessage = `${systemMessage}\n\n These are the previous messages between you and the user: \n${messages.join("\n")} \n \n make sure to use this information to continue the conversation.`;
@@ -90,22 +89,27 @@ class GPTService {
         user: userId,
         messages: [],
         chat_session_id: newChatId,
+        chef_name,
       });
       await chatDocument.save();
     }
-    const chat = await this.model.createChatSession({
-      temperature: 0.8,
-      systemPrompt: systemMessage,
-    });
-    this.chatSessions.set(`${id}_${userId}`, chat);
-    logger.info(`Chat session for user ${userId} is ready to use.`);
+    try {
+      const chat = await this.model.createChatSession({
+        temperature: 0.8,
+        systemPrompt: systemMessage,
+      });
+      this.chatSessions.set(`${id}_${userId}`, chat);
+      logger.info(`Chat session for user ${userId} is ready to use.`);
+    } catch (error) {
+      logger.error("Error creating chat session", error);
+    }
     return id;
   }
   async generateResponse(
     message: string,
     userId: string,
     res: Response,
-    chatId: string
+    chatId: string,
   ): Promise<void> {
     const chat = this.chatSessions.get(`${chatId}_${userId}`);
     if (!this.model || !chat) {
@@ -123,14 +127,19 @@ class GPTService {
     // Create a completion using the chat session
     logger.info("generating completion");
     const stream = createCompletionStream(chat, message);
+    const socket = SocketService.getSocketByUserId(userId);
 
     // Start streaming the response
     res.setHeader("Content-Type", "text/plain");
     res.setHeader("Transfer-Encoding", "chunked");
     let result: any;
     let streamEnded: boolean = false;
+    // log if socket exists
+    logger.info(`Socket: ${socket}`);
+    socket?.emit("chatResponseStart");
     stream.tokens.on("data", (data: any) => {
       logger.info(`Received chunk: ${data}`);
+      socket?.emit("chatResponseChunk", data);
       res.write(data); // Write each chunk to the HTTP response stream
     });
 
@@ -140,30 +149,34 @@ class GPTService {
       result = await stream.result;
       logger.info("Stream finished");
       logger.info(JSON.stringify(result, null, 2));
-      res.end(); // Signal that the stream is complete
-      // Wait for the completion to finish
+      res.end();
+      socket?.emit("chatResponseEnd", result.choices[0].message.content);
       chatDocument.messages.push({
         role: "assistant",
         content: result.choices[0].message.content.toString(),
       });
-      await chatDocument.save(); // Save the completed chat to the database
+      await chatDocument.save();
     });
     stream.tokens.on("error", (error: any) => {
       logger.error("Error during streaming", error);
       res.status(500).send({ error: "Error generating response" });
+      socket?.emit("chatResponseError", error);
     });
   }
 
   async getChatHistory(
     userId: string,
-    chatId: string
+    chatId: string,
   ): Promise<IChatDocument | null> {
-    return await ChatModel.findById(chatId).where({ user: userId });
+    return await ChatModel.findOne({
+      chat_session_id: chatId,
+      user: userId,
+    });
     // .populate("user");
   }
 
   async getUserChats(userId: string): Promise<IChatDocument[]> {
-    return await ChatModel.find({ user: userId });
+    return await ChatModel.find({ user: userId }).sort({ updated_at: -1 });
   }
 
   async disposeModel(): Promise<void> {

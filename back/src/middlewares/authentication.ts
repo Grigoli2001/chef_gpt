@@ -7,13 +7,12 @@ import { UserRequest } from "../types/customRequests.interface";
 const verifyToken = (
   req: UserRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   const token = req.header("Authorization");
 
   if (!token) {
     logger.error("No token provided");
-    logger.info("TOKEN: ", token);
     res
       .status(statusCodes.unauthorized)
       .json({ error: "Unauthorized", message: "No token provided" });
@@ -23,11 +22,9 @@ const verifyToken = (
   try {
     const decoded = jwt.verify(
       token.split(" ")[1],
-      process.env.JWT_SECRET_KEY as string
+      process.env.JWT_SECRET_KEY as string,
     ) as UserJwtPayload;
     req.user = decoded.user;
-    logger.info("TOKEN: ", token);
-    logger.info("TOKEN USER: ", req.user);
     next();
   } catch (error) {
     logger.error(error);

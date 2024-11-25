@@ -41,7 +41,6 @@ export default function PreferencesForm({
   };
 
   const handleSubmit = async () => {
-    console.log(userPreferences);
     try {
       const response = await setPreferences(userPreferences);
       console.log(response);

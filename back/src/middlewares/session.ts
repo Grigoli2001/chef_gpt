@@ -6,7 +6,7 @@ import { UserRequest } from "../types/customRequests.interface";
 const verifySession = (
   req: UserRequest,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   if (!req.session?.user) {
     logger.error("No session user provided");

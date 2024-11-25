@@ -9,7 +9,7 @@ import logger from "../middlewares/winston";
 
 const createUserPreferences = async (
   req: UserPreferencesRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   const { preferences } = req.body;
   const userId = req.session?.user?._id;
@@ -36,7 +36,7 @@ const createUserPreferences = async (
 
 const getUserPreferences = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   const userId = req.session?.user?._id;
 
@@ -58,7 +58,7 @@ const getUserPreferences = async (
 
 const updateUserPreferences = async (
   req: UserPreferencesRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   const userId = req.session?.user?._id;
   const { preferences } = req.body;
@@ -73,7 +73,7 @@ const updateUserPreferences = async (
     const updatedUserPreferences = await userPrefernces.findOneAndUpdate(
       { user: userId }, // Find the user preferences document by userId
       { $set: preferences }, // Set the new preferences values
-      { new: true } // Return the updated document after the update
+      { new: true }, // Return the updated document after the update
     );
 
     return res.status(statusCodes.success).json(updatedUserPreferences);
@@ -86,7 +86,7 @@ const updateUserPreferences = async (
 
 const deleteUserPreferences = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   const userId = req.session?.user?._id;
 
@@ -106,7 +106,7 @@ const deleteUserPreferences = async (
     const userPreferences = await userPrefernces.findOneAndUpdate(
       { user: userId }, // Find the user preferences document by userId
       { $set: defaultPreferences }, // Set the new preferences values
-      { new: true } // Return the updated document after the update
+      { new: true }, // Return the updated document after the update
     );
 
     if (!userPreferences) {

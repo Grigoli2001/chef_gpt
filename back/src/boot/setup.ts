@@ -6,6 +6,9 @@ import morgan from "morgan";
 import session from "express-session";
 import logger, { stream } from "../middlewares/winston";
 import cookieParser from "cookie-parser";
+import { Server } from "socket.io";
+import SocketService from "../services/socket.service";
+import http from "http";
 
 // middleware
 import notFound from "../middlewares/notFound";
@@ -22,6 +25,22 @@ dotenv.config();
 
 const PORT = process.env.PORT || 8080;
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:5173",
+      "http://localhost:3001",
+      "http://localhost:3002",
+      "http://localhost:3003",
+      "http://localhost:3004",
+      "http://localhost:3005",
+      "http://localhost:3006",
+    ],
+    credentials: true,
+  },
+});
 
 try {
   mongoose.connect(process.env.MONGO_URI as string);
@@ -59,7 +78,7 @@ export const registerCoreMiddleWare = (): Application => {
           secure: false,
           httpOnly: true,
         },
-      })
+      }),
     );
 
     app.use(morgan("combined", { stream }));
@@ -77,7 +96,7 @@ export const registerCoreMiddleWare = (): Application => {
           "http://localhost:3006",
         ],
         credentials: true,
-      })
+      }),
     );
     app.use(helmet()); // enabling helmet -> setting response headers
     app.use(cookieParser());
@@ -97,7 +116,7 @@ export const registerCoreMiddleWare = (): Application => {
     return app;
   } catch (err) {
     logger.error(
-      `Error thrown while executing registerCoreMiddleWare Error: ${err}`
+      `Error thrown while executing registerCoreMiddleWare Error: ${err}`,
     );
     process.exit(1);
   }
@@ -114,9 +133,9 @@ const handleError = (): void => {
 export const startApp = (): void => {
   try {
     // register core application level middleware
+    SocketService.initialize(io);
     registerCoreMiddleWare();
-
-    app.listen(PORT, () => {
+    server.listen(PORT, () => {
       logger.info("Listening on 127.0.0.1:" + PORT);
     });
 
@@ -127,8 +146,8 @@ export const startApp = (): void => {
       `startup :: Error while booting the applicaiton ${JSON.stringify(
         err,
         undefined,
-        2
-      )}`
+        2,
+      )}`,
     );
     throw err;
   }

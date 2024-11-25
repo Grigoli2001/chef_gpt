@@ -85,13 +85,13 @@ const signin = async (req: AuthRequest, res: Response): Promise<Response> => {
     const accessToken = jwt.sign(
       { user: { id: user._id, email: user.email } },
       process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     const refreshToken = jwt.sign(
       { user: { id: user._id, email: user.email } },
       process.env.JWT_REFRESH_SECRET_KEY as string,
-      { expiresIn: "7d" }
+      { expiresIn: "7d" },
     );
     res.cookie("refreshToken", refreshToken);
     return res.status(statusCodes.success).json({ accessToken });
@@ -106,7 +106,7 @@ const signin = async (req: AuthRequest, res: Response): Promise<Response> => {
 // Refresh access token with a refresh token
 const refreshAccessToken = async (
   req: AuthRequest,
-  res: Response
+  res: Response,
 ): Promise<Response> => {
   const refreshToken = req.cookies?.refreshToken;
 
@@ -120,7 +120,7 @@ const refreshAccessToken = async (
     // Verify the refresh token and check if it is equal to user's id and email
     const decoded = jwt.verify(
       refreshToken,
-      process.env.JWT_REFRESH_SECRET_KEY as string
+      process.env.JWT_REFRESH_SECRET_KEY as string,
     ) as { user: { id: string; email: string } };
 
     if (decoded.user.id !== req.session.user._id) {
@@ -132,7 +132,7 @@ const refreshAccessToken = async (
     const accessToken = jwt.sign(
       { user: { id: decoded.user.id, email: decoded.user.email } },
       process.env.JWT_SECRET_KEY as string,
-      { expiresIn: "1h" }
+      { expiresIn: "1h" },
     );
 
     return res.status(statusCodes.success).json({ accessToken });

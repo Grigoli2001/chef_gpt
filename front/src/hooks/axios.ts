@@ -7,10 +7,4 @@ const api: AxiosInstance = axios.create({
   withCredentials: true,
 });
 
-// console.log api headers
-api.interceptors.request.use((config) => {
-  console.log("Request with: ", config.headers);
-
-  return config;
-});
 export default api;

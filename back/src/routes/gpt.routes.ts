@@ -10,13 +10,13 @@ router.post(
   "/chatResponse",
   verifyToken,
   verifySession,
-  GPTController.getChatResponse
+  GPTController.getChatResponse,
 );
 router.get(
   "/chat/history/:chatId",
   verifyToken,
   verifySession,
-  GPTController.getChatHistory
+  GPTController.getChatHistory,
 );
 router.get("/chats", verifyToken, verifySession, GPTController.getUserChats);
 

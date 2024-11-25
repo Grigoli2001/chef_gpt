@@ -6,22 +6,22 @@ const router = express.Router();
 router.post(
   "/userPreferences",
   verifySession,
-  userPreferencesServices.createUserPreferences
+  userPreferencesServices.createUserPreferences,
 );
 router.get(
   "/userPreferences",
   verifySession,
-  userPreferencesServices.getUserPreferences
+  userPreferencesServices.getUserPreferences,
 );
 router.put(
   "/userPreferences",
   verifySession,
-  userPreferencesServices.updateUserPreferences
+  userPreferencesServices.updateUserPreferences,
 );
 router.delete(
   "/userPreferences",
   verifySession,
-  userPreferencesServices.deleteUserPreferences
+  userPreferencesServices.deleteUserPreferences,
 );
 
 export default router;

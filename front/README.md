@@ -1,50 +1,149 @@
-# React + TypeScript + Vite
+# ChefGPT Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the frontend for the ChefGPT application. It is built using React, TypeScript, and Vite. The frontend handles user authentication, chat sessions, and user preferences.
 
-Currently, two official plugins are available:
+## Table of Contents
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Scripts](#scripts)
+- [Folder Structure](#folder-structure)
+- [Explanation of Each Folder](#explanation-of-each-folder)
+- [Components](#components)
+- [Pages](#pages)
+- [Context](#context)
+- [API](#api)
+- [Types](#types)
+- [Styles](#styles)
+- [License](#license)
 
-## Expanding the ESLint configuration
+## Installation
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+1. Clone the repository:
 
-- Configure the top-level `parserOptions` property like this:
+   ```bash
+   git clone https://github.com/your-repo/chef-gpt-frontend.git
+   cd chef-gpt-frontend
+   ```
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file with the following content:
+
+   ```plaintext
+   VITE_BACKEND_URL=http://localhost:8080
+   ```
+
+4. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+## Configuration
+
+- `eslint.config.js`: Configuration for ESLint.
+- `tailwind.config.js`: Configuration for Tailwind CSS.
+- `vite.config.ts`: Configuration for Vite.
+
+## Scripts
+
+- `npm run dev`: Start the development server.
+- `npm run build`: Build the project for production.
+- `npm run lint`: Run ESLint.
+- `npm run preview`: Preview the production build.
+
+## Folder Structure
+
+```plaintext
+front/
+├── .gitignore
+├── eslint.config.js
+├── index.html
+├── package.json
+├── postcss.config.js
+├── public/
+├── README.md
+├── src/
+│   ├── api/
+│   ├── components/
+│   ├── constants/
+│   ├── context/
+│   ├── hooks/
+│   ├── pages/
+│   ├── styles/
+│   ├── types/
+│   ├── App.css
+│   ├── App.tsx
+│   ├── index.css
+│   ├── main.tsx
+│   └── vite-env.d.ts
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+## Explanation of Each Folder
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- **api**: Contains functions for making API requests.
+- **components**: Contains reusable React components.
+- **constants**: Contains constant values used throughout the application.
+- **context**: Contains React context providers and hooks.
+- **hooks**: Contains custom React hooks.
+- **pages**: Contains the main pages of the application.
+- **styles**: Contains styled components and CSS files.
+- **types**: Contains TypeScript type definitions.
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Components
+
+- **Sidebar.tsx**: The sidebar component that displays the navigation menu.
+- **StartChat.tsx**: The component for starting a new chat session.
+- **SelectLikes.tsx**: The component for selecting user preferences for likes.
+- **SelectDislikes.tsx**: The component for selecting user preferences for dislikes.
+- **PreferencesForm.tsx**: The form component for setting user preferences.
+- **Header.tsx**: The header component displayed at the top of each page.
+- **Footer.tsx**: The footer component displayed at the bottom of each page.
+- **ChatMessage.tsx**: The component for displaying individual chat messages.
+- **UserProfile.tsx**: The component for displaying user profile information.
+
+## Pages
+
+- **LoginPage.tsx**: The login page.
+- **RegisterPage.tsx**: The registration page.
+- **ChatPage.tsx**: The chat page where users interact with the GPT model.
+- **HomePage.tsx**: The home page displaying available chefs.
+- **PreferencesPage.tsx**: The page for setting user preferences.
+
+## Context
+
+- **AuthProvider.tsx**: Provides authentication context to the application.
+- **SidebarContext.tsx**: Provides sidebar state context to the application.
+- **UseAuth.ts**: Custom hook for using the authentication context.
+- **UseSidebar.ts**: Custom hook for using the sidebar context.
+
+## API
+
+- **auth.ts**: Contains functions for authentication-related API requests.
+- **preferences.ts**: Contains functions for user preferences-related API requests.
+- **gpt.ts**: Contains functions for interacting with the GPT model.
+
+## Types
+
+- **auth.types.ts**: Type definitions for authentication-related data.
+- **api.types.ts**: Type definitions for API responses and requests.
+
+## Styles
+
+- **preferences.styles.ts**: Styled components for the preferences form.
+- **App.css**: Global CSS styles.
+- **index.css**: Tailwind CSS styles.
+
+## License
+
+This project is licensed under the MIT License.

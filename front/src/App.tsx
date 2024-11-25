@@ -4,6 +4,7 @@ import {
   createBrowserRouter,
   createRoutesFromElements,
   RouterProvider,
+  useLocation,
 } from "react-router-dom";
 import PublicRoute from "./routes/PublicRoute";
 import PrivateRoute from "./routes/PrivateRoute";
@@ -11,6 +12,8 @@ import PrivateRoute from "./routes/PrivateRoute";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import ChatPage from "./pages/ChatPage";
+import Layout from "./Layout/Layout";
+import HomePage from "./pages/HomePage";
 import PreferencesPage from "./pages/PreferencesPage";
 
 const router = createBrowserRouter(
@@ -22,11 +25,19 @@ const router = createBrowserRouter(
       </Route>
       <Route path="preferences" element={<PreferencesPage />} />
       <Route element={<PrivateRoute />}>
-        <Route index element={<ChatPage />} />
+        <Route element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="chat" element={<ChatPageWithKey />} />
+        </Route>
       </Route>
     </Route>
   )
 );
+
+function ChatPageWithKey() {
+  const location = useLocation();
+  return <ChatPage key={location.key} />;
+}
 
 function App() {
   return (
