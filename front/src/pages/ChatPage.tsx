@@ -162,7 +162,6 @@ export default function ChatPage() {
         chatBoxRef={chatBoxRef}
         chefImageRef={chefImageRef}
         chatHistory={chatHistory}
-        controls={controls}
         isChatHistoryLoading={isChatHistoryLoading}
         isLoading={isLoading}
       />

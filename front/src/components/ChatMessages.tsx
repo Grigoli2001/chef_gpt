@@ -8,7 +8,6 @@ const ChatMessages = ({
   isLoading,
 
   chefImageRef,
-  controls,
 }: {
   chatBoxRef: React.RefObject<HTMLDivElement>;
   chatHistory: { messages: { role: string; content: string }[] } | undefined;
@@ -16,8 +15,6 @@ const ChatMessages = ({
   isLoading: boolean;
 
   chefImageRef: React.MutableRefObject<string>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  controls: any;
 }) => {
   const [loaderText, setLoaderText] = useState(
     "Preparing your culinary adventure..."
@@ -90,11 +87,16 @@ const ChatMessages = ({
               >
                 <motion.p
                   initial={{ opacity: 0 }}
-                  animate={controls}
+                  animate={{
+                    opacity: 1,
+                    transition: { duration: 0.8 },
+                  }}
                   transition={{ duration: 0.8 }}
                   className="typewriter"
                 >
-                  {message.content}
+                  {message.content[0] === `"`
+                    ? message.content.slice(1, -1)
+                    : message.content}
                 </motion.p>
               </div>
             </motion.div>
